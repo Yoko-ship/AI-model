@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+<<<<<<< HEAD:public/Ai.html
+    <!-- ** Must-Have  -->
+    <meta name="viewport" content="width=device-width,initial-scale=1">           
+=======
+    <meta name="viewport" content="width=device-width; user-scalable=yes">
+>>>>>>> 4b9f16d244e2db75ae86c7ea8cd7295b2e01101b:Ai.html
+    <title>AI Model</title>
+    <link rel="stylesheet" href="ai.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Kode+Mono:wght@400..700&family=Noto+Serif+Khitan+Small+Script&display=swap" rel="stylesheet">
+    <script src="jquery/dist/jquery.js"></script>
+    <script src="server.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="item header">
+            AI-Model
+        </div>
+        <div class="side-btn">
+            <button class="btn-image menu-button"><img src="refresh_23dp_000000_FILL0_wght400_GRAD0_opsz24.svg" title="Refresh page"></button>
+            <button class="btn-image save-button"><img src="save_24dp_000000_FILL0_wght400_GRAD0_opsz24.svg" title="Save History"></button>
+            <button class="btn-image clear-button"><img src="delete_forever_23dp_000000_FILL0_wght400_GRAD0_opsz24.svg" title="Clear History"></button>
+        </div>
+        <div class="item content">
+            <div class="item sidebar">
+                <p class="side-para"></p>
+            </div> 
+            <div class="buttons">
+                <button type="button" class="button first-btn"></button>
+                <button type="button" class="button second-btn"></button>
+                <button type="button" class="button third-btn"></button>
+                <button type="button" class="button fourth-btn"></button>
+            </div>
+            <div class="chat-container">
+                <p class="content-text"></p>
+            </div>
+        </div>
+        <div class="int-btn">
+            <textarea class="content-div input-text" placeholder="Введите запрос" required></textarea>
+            <button class="send-button"><img src="search_23dp_000000_FILL0_wght400_GRAD0_opsz24.svg" class="send-image" title="Search"></button>
+        </div>
+    </div>
+
+
+
+    <script type="importmap">
+        {
+            "imports":{
+                "@google/generative-ai": "https://esm.run/@google/generative-ai"
+            }
+        }
+    </script>
+    <script type="module">
+        import {GoogleGenerativeAI} from "@google/generative-ai";
+
+
+
+        const api_key = "AIzaSyCsbm3paPBslK2g0MW8YwZwD4zpl9H_37Y"
+        
+        // TEXTS
+        var content_para = document.querySelector('.content-text')
+        
+        // BUTTONS
+        var btn_send = document.querySelector('.send-button')
+        var first_btn = document.querySelector(".first-btn")
+        var second_btn = document.querySelector(".second-btn")
+        var third_btn = document.querySelector(".third-btn")
+        var fourth_btn = document.querySelector(".fourth-btn")
+        var buttons = document.querySelector(".buttons")
+        var btn_menu = document.querySelector('.menu-button')
+        var save_btn = document.querySelector('.save-button')
+        var clear_btn = document.querySelector('.clear-button')
+        
+        // Others
+        var input = document.querySelector("textarea")
+        var textarea = document.querySelector("textarea")
+        var box = document.querySelector('.sidebar')
+        var side_para = document.querySelector('.side-para')
+
+
+        
+        textarea.addEventListener("keyup", e =>{
+            textarea.style.height = "auto";
+            let scHeight = e.target.scrollHeight;
+            textarea.style.height = `${scHeight}px`;
+        })
+
+
+        // Random first
+        var first_random = {
+            "Как правильно питаться": "Я хочу начать питаться более полезной едой овощи, фрукты и продукты из цельного зерна." + " Вы профессиональный диетолог, умеющий составлять план здорового питания. Дайте конкретные рекомендации о том, как мне следует питаться. Следите за тем, чтобы рацион был разнообразным и блюда могли чередоваться.Выражайтесь конкретно и дайте чёткие рекомендации по ингредиентам.",
+            "Новые технологии" : "Во всех соцсетях и новостях говорят о генеративном ИИ.Можешь помочь мне понять, о чем там пишут? Что вообще должен знать человек, который не разбирается в этой теме?В конце ответа укажи несколько источников, с которых можно начать изучение темы.",
+            "Разделы науки": "Объясни простыми словами, что такое когнитивная нейронаука.Какие ключевые понятия из этой области нужно знать? Как она может повлиять на устройство общества, науку и экономику? Каковы последние результаты и открытия? Умести ответ в несколько абзацев. Пиши коротко.",
+            "Инструкции": "Напиши мне руководство для новичков в рисовании акварелью.Ты – эксперт, который отлично умеет излагать основы предмета новичкам. Напиши исчерпывающий обзор самого необходимого. Будь лаконичен."
+        }
+        const first_keys = Object.keys(first_random)
+        var first_random_keys = first_keys[Math.floor(Math.random() * first_keys.length)]
+
+        // second
+        var second_random = {
+            "План поездки": "Помоги мне спланировать трехдневную поездку в Ирландию, город Дублин. Не ставь планы раньше десяти утра.Ты – профессиональный турагент, умеешь планировать путешествия и отлично знаешь местность. Включи в план общеизвестные места, которые должен посетить каждый, и какие-нибудь неочевидные, но стоящие точки.Учитывай в плане время прибытия, время, которое я проведу на месте, время перемещения от одного места к другому, плюс укажи плату за вход, если она понадобится.",
+            "Черновик сообщения": "Напиши сообщение, которое можно отправить парню, с которым мы были на свидании. Нужно вежливо донести до него, что на второе свидание я не хочу.Ты хорошо умеешь писать сообщения, которые звучат естественно и непринужденно. Будь вежливым и доброжелательным, но говори прямо. Тон – спокойный и вежливый. Формулируй лаконично и по делу.",
+            "Сопроводительное письмо": "Дайте мне 10 советов о том, как написать сопроводительное письмо.Вы карьерный консультант и у вас большой опыт в поиске походящей для человека профессии. Составьте список наиболее важных моментов, которые нужно учитывать при написании сопроводительного письма. Фокусируйтесь на главном.Распределите главные пункты в порядке от самого важного до самого незначительного.",
+            "Список вопросов": "У меня будет собеседование на вакансию SMM-менеджера, так что я хочу подготовиться.Представь, что ты - профессиональный HR, мастер по поиску именно таких специалистов. Ты отлично знаешь, какие вопросы чаще всего задают кандидатам, и как на них отвечать.Составь для меня список этих вопросов. ",
+        }
+
+        const second_keys = Object.keys(second_random)
+        const second_random_keys = second_keys[Math.floor(Math.random() * second_keys.length)]
+
+        // third
+
+        var third_random = {
+            "Виды диет": "Я хочу лучше понять принцип кето-диеты.Объясни ее смысл простыми словами, как будто я совсем ничего не знаю о диетах. Используй простой и понятный язык, пиши логично и последовательно.",
+            "Как вырастить цветы" : "У меня есть орхидея, и я не знаю, как правильно за ней ухаживать. Не могли бы вы дать мне пару советов?Вы профессиональный садовод и специалист по уходу за растениями, обладающий навыками ухода за комнатными растениями различных видов. Дайте конкретные практические советы, которые помогут мне правильно ухаживать за растением.",
+            "Как развить YouTube-канал": "Я ютубер и снимаю ролики про то, как научиться играть на фортепиано.На моём канале 100 подписчиков и в среднем у меня 1 000 просмотров в месяц. Самое популярное из моих видео набрало 10 000 просмотров.Как мне увеличить число просмотров?Вы ютуб-эксперт и уже помогли многим людям раскрутить свои каналы.",
+            "Резюме": "Я составляю резюме и нуждаюсь в твоей помощи.Вот что я хочу там указать:- программист, техлид- python, java, C++ Это нужно переформулировать в набор убедительных фраз.Представь, что ты – мастер в написании резюме, и отлично умеешь определять и выделять в опыте и навыках человека самое важное. Используй сильные, энергичные формулировки. Удели особое внимание достижениям подопечного.Пиши лаконично и ясно, так, чтобы было легко читать и понимать.",
+        }
+
+        const third_keys = Object.keys(third_random)
+        const third_random_keys = third_keys[Math.floor(Math.random() * third_keys.length)]
+
+        // fourth
+
+        var fourth_random = {
+            "Принципы работы": "Объясни, как автономный транспорт сам себя водит?Представь, что ты инженер, высококвалифицированный специалист в области автономного транспорта. Подробно разбери, как работает технология, пошагово распиши принцип ее действия. Излагай с логического начала.Твои объяснения должны быть понятными. Чтобы было проще, используй сравнения. Пиши точно и по делу.",
+            "Сходства и различия": "Противопоставь и сравни овсяное и миндальное молокоПиши просто, понятно, логично и емко.Упомяни несколько неожиданных фактов, чтобы заинтересовать читателя.",
+            "Природные явления": "Объясни, может ли молния ударить в одно и то же место несколько раз",
+            "Письмо" : "Я составляю письмо профессору по экономике, нужна твоя помощь.Вот о чем я хочу написать в целом:- Вы были моим любым преподавателем в этом семестре- Мне понравилась лекция по теории игр- Что можно еще почитать по теме?Из выделенного текста нужно сделать электронное письмо.Ты – эксперт, хорошо умеющий составлять убедительные письма, который прочитают и не оставят без ответа. Обязательно улучши сканируемость текста. Включи в тело письма явный призыв к действию.Будь вежлив, но не ходи вокруг да около. Пиши живо, но в рамках допустимого регистра. Выражайся лаконично."
+        };
+
+        const fourth_keys = Object.keys(fourth_random)
+        const fourth_random_keys = fourth_keys[Math.floor(Math.random() * fourth_keys.length)]
+
+        btn_send.addEventListener("click",()=>{
+            async function run(){
+            const genAI = new GoogleGenerativeAI(api_key)
+            const generationConfing = {
+                stopSequences: ["red"],
+                maxOutputTokens: 200,
+                topP: 0.1,
+                topK: 16,
+            };
+
+            const model = genAI.getGenerativeModel({model: "gemini-1.5-flash",generationConfing});
+            const promt = input.value
+            side_para.textContent = promt
+            input.value = ""
+            buttons.style.display = "none"
+            box.style.display = "flex"
+            const result = await model.generateContent(promt);
+            const response = result.response;
+            var text = response.text()
+            text = text.replaceAll("*"," ")
+            content_para.textContent = text
+        }
+        run()
+        })
+
+
+
+        
+        btn_menu.addEventListener("click",()=>{
+            // sidebar.classList.toggle('visible')           // Открывает и закрывает при нажатии на кнопку 
+
+            location.reload() // Для перезагрузки сайта
+        })
+
+        first_btn.textContent = first_random_keys
+        first_btn.addEventListener("click",()=>{
+            input.value = (first_random[first_random_keys])
+        })
+
+        second_btn.textContent = second_random_keys
+        second_btn.addEventListener("click",()=>{
+            input.value = (second_random[second_random_keys])
+        });
+        third_btn.textContent = third_random_keys
+        third_btn.addEventListener("click",()=>{
+            input.value = (third_random[third_random_keys])
+        })
+
+        fourth_btn.textContent = fourth_random_keys
+        fourth_btn.addEventListener("click",()=>{
+            input.value = (fourth_random[fourth_random_keys])
+        })
+
+
+        window.addEventListener("keydown",e =>{
+            input.focus()
+            if(e.keyCode == 13){
+                btn_send.click()
+
+            }
+        })
+
+
+        save_btn.addEventListener("click",()=>{
+            let messages = []
+            document.querySelectorAll('p').forEach(p => messages.push(p.outerHTML))
+            localStorage.messages = messages
+        })
+
+        clear_btn.addEventListener("click",()=>{
+            localStorage.clear()
+            document.querySelectorAll("p").forEach(p => box.removeChild(p))
+            input.focus()
+        })
+
+    </script>
+</body>
+</html>
